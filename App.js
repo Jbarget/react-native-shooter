@@ -1,6 +1,18 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, Image, View, TouchableOpacity } from "react-native";
 import { Camera, Permissions } from "expo";
+const gunshot = Expo.Audio.Sound.create(require("./gunshot.mp3"));
+
+const shootGun = async () => {
+  const soundObject = new Expo.Audio.Sound();
+  try {
+    soundObject.loadAsync(require("./gunshot.mp3"));
+    await soundObject.playAsync();
+    // Your sound is playing!
+  } catch (error) {
+    // An error occurred!
+  }
+};
 
 export default class App extends React.Component {
   state = {
@@ -11,6 +23,7 @@ export default class App extends React.Component {
   async componentWillMount() {
     const { hasAudioPermissions, hasCameraPermissions } = this.state;
   }
+
   render() {
     const { hasCameraPermission } = this.state;
     if (hasCameraPermission === null) {
@@ -21,13 +34,9 @@ export default class App extends React.Component {
       return (
         <View style={{ flex: 1 }}>
           <Camera style={{ flex: 1 }} type={this.state.type}>
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: "transparent",
-                flexDirection: "row"
-              }}
-            />
+            <TouchableOpacity style={styles.container} onPress={shootGun}>
+              <Image style={styles.gun} source={require("./gun.png")} />
+            </TouchableOpacity>
           </Camera>
         </View>
       );
@@ -38,8 +47,14 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    flexDirection: "column",
+    backgroundColor: "transparent",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "flex-end",
+    paddingLeft: 50
+  },
+  gun: {
+    width: 80,
+    height: 100
   }
 });
